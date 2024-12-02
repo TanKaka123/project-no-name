@@ -10,8 +10,10 @@ type FormInputProps = {
 }
 
 export const FormInput: React.FC<FormInputProps> = ({ name, label, type, placeholder }) => {
-  const { register, formState: { errors } } = useFormContext<FieldValues>();
-  
+  const { register, formState: { errors }, setValue  } = useFormContext<FieldValues>();
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValue(name, e.target.value); 
+  };
   return (
     <FormControl isInvalid={!!errors[name]}>
       <FormLabel htmlFor={name} className="dark:text-gray-400 text-lg">{label}</FormLabel>
@@ -19,6 +21,7 @@ export const FormInput: React.FC<FormInputProps> = ({ name, label, type, placeho
         id={name}
         {...register(name, { required: `${label} is required` })}
         type={type}
+        onChange={handleChange}
         placeholder={placeholder}
         className="dark:bg-indigo-700 dark:text-gray-300 dark:border-gray-700 p-3 shadow-md placeholder:text-base border-gray-300 rounded-lg w-full focus:scale-105 ease-in-out duration-300"
       />

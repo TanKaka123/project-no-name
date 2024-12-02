@@ -6,9 +6,8 @@ export const withPrivateRoute = (WrappedComponent: React.ComponentType) => {
   return (props: any) => {
     const { isAuthenticated } = useAuth();
     const router = useRouter();
-
     useEffect(() => {
-      if (!isAuthenticated) {
+      if (!isAuthenticated ) {
         router.push('/login');
       }
     }, [isAuthenticated, router]);
