@@ -1,27 +1,32 @@
-import React from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import { useRouter } from 'next/router';
-import { Box, Button } from '@chakra-ui/react';
-import { useForm } from 'react-hook-form';
-import { FormFooter, FormInput, ThirdPartyAuth } from '@/components/common/loginPage';
+import React from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/router";
+import { Box, Button, Text } from "@chakra-ui/react";
+import { FormInput } from "@/components/common/loginPage";
+import { useForm, FormProvider } from "react-hook-form";
 
 type FormData = {
   email: string;
   password: string;
   confirmPassword: string;
-}
+};
 
 const SignUp: React.FC = () => {
-//   const { signUp } = useAuth(); 
+  const { register } = useAuth();
   const router = useRouter();
-  const { handleSubmit } = useForm<FormData>();
+  const methods = useForm<FormData>();
+  const { handleSubmit } = methods;
 
-  const handleSignUp = (data: FormData) => {
+  const handleSignUp = async (data: FormData) => {
     if (data.password === data.confirmPassword) {
-    //   signUp(data.email, data.password);
-      router.push('/dashboard');
+      try {
+        await register(data.email, data.password);
+        router.push("/login");
+      } catch (error) {
+        console.error(error);
+      }
     } else {
-      alert('Passwords do not match');
+      alert("Passwords do not match");
     }
   };
 
@@ -33,27 +38,59 @@ const SignUp: React.FC = () => {
             <h1 className="pt-8 pb-6 font-bold text-5xl dark:text-gray-400 text-center cursor-default">
               SIGN UP
             </h1>
-            <form onSubmit={handleSubmit(handleSignUp)} className="space-y-4">
-              <FormInput name="email" label="Email" type="email" placeholder="Email" />
-              <FormInput name="password" label="Password" type="password" placeholder="Password" />
-              <FormInput
-                name="confirmPassword"
-                label="Confirm Password"
-                type="password"
-                placeholder="Confirm Password"
-              />
-              <Button
-                className="bg-gradient-to-r from-blue-500 to-purple-500 shadow-lg mt-6 p-2 text-white rounded-lg w-full hover:scale-105 hover:from-purple-500 hover:to-blue-500 transition duration-300 ease-in-out"
-                type="submit"
-              >
-                Sign up
-              </Button>
-            </form>
+            <FormProvider {...methods}>
+              {" "}
+              <form onSubmit={handleSubmit(handleSignUp)} className="space-y-4">
+                <FormInput
+                  name="email"
+                  label="Email"
+                  type="email"
+                  placeholder="Email"
+                />
+                <FormInput
+                  name="password"
+                  label="Password"
+                  type="password"
+                  placeholder="Password"
+                />
+                <FormInput
+                  name="confirmPassword"
+                  label="Confirm Password"
+                  type="password"
+                  placeholder="Confirm Password"
+                />
+                <Button
+                  className="bg-gradient-to-r from-blue-500 to-purple-500 shadow-lg mt-6 p-2 text-white rounded-lg w-full hover:scale-105 hover:from-purple-500 hover:to-blue-500 transition duration-300 ease-in-out"
+                  type="submit"
+                >
+                  Sign up
+                </Button>
+                <FormFooter />
+              </form>
+            </FormProvider>
           </Box>
         </Box>
       </Box>
     </Box>
   );
 };
+
+const FormFooter = () => {
+  const router = useRouter();
+  return (
+    <Box textAlign="center" mt={4}>
+      <Button
+        variant="ghost"
+        onClick={() => router.push("/login")}
+        _hover={{ textDecoration: "underline" }}
+      >
+        <Text color="blue.500" fontWeight="light" fontSize="sm">
+          I already have an account
+        </Text>
+      </Button>
+    </Box>
+  );
+};
+
 
 export default SignUp;
