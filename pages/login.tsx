@@ -1,9 +1,13 @@
-import type React from "react";
+import React from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/router";
-import { Box, Button } from "@chakra-ui/react";
+import { Box, Button, Center, Spinner } from "@chakra-ui/react";
 import { FormProvider, useForm } from "react-hook-form";
-import { FormFooter, FormInput, ThirdPartyAuth } from "@/components/common/loginPage";
+import {
+  FormFooter,
+  FormInput,
+  ThirdPartyAuth,
+} from "@/components/common/loginPage";
 import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
 
 type FormData = {
@@ -15,14 +19,17 @@ const Login: React.FC = () => {
   const { login } = useAuth();
   const router = useRouter();
   const methods = useForm<FormData>();
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
   const handleLogin = async (data: FormData) => {
-    try{
+    setIsLoading(true);
+    try {
       await login(data.email, data.password);
       router.push("/");
-    }
-    catch(error){
+    } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -35,20 +42,37 @@ const Login: React.FC = () => {
               LOG IN
             </h1>
             <FormProvider {...methods}>
-              <form onSubmit={methods.handleSubmit(handleLogin)} className="space-y-4">
-                <FormInput name="email" label="Email" type="email" placeholder="Email" />
+              <form
+                onSubmit={methods.handleSubmit(handleLogin)}
+                className="space-y-4"
+              >
+                <FormInput
+                  name="email"
+                  label="Email"
+                  type="email"
+                  placeholder="Email"
+                />
                 <FormInput
                   name="password"
                   label="Password"
                   type="password"
                   placeholder="Password"
                 />
-                <Button
-                  className="bg-gradient-to-r from-blue-500 to-purple-500 shadow-lg mt-6 p-2 text-white rounded-lg w-full hover:scale-105 hover:from-purple-500 hover:to-blue-500 transition duration-300 ease-in-out"
-                  type="submit"
-                >
-                  Log in
-                </Button>
+                {isLoading ? (
+                  <Box h={12} className="flex justify-center mt-4">
+                    <Center>
+                      <Spinner size="lg" color="white" />
+                    </Center>
+                  </Box>
+                ) : (
+                  <Button
+                    h={12}
+                    className="bg-gradient-to-r from-blue-500 to-purple-500 shadow-lg mt-6 p-2 text-white rounded-lg w-full hover:scale-105 hover:from-purple-500 hover:to-blue-500 transition duration-300 ease-in-out"
+                    type="submit"
+                  >
+                    Log in
+                  </Button>
+                )}
               </form>
             </FormProvider>
             <ThirdPartyAuth />

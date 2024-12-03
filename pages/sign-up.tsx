@@ -1,7 +1,7 @@
 import React from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/router";
-import { Box, Button, Text } from "@chakra-ui/react";
+import { Box, Button, Center, Spinner, Text } from "@chakra-ui/react";
 import { FormInput } from "@/components/common/loginPage";
 import { useForm, FormProvider } from "react-hook-form";
 
@@ -16,14 +16,18 @@ const SignUp: React.FC = () => {
   const router = useRouter();
   const methods = useForm<FormData>();
   const { handleSubmit } = methods;
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
   const handleSignUp = async (data: FormData) => {
     if (data.password === data.confirmPassword) {
+      setIsLoading(true);
       try {
         await register(data.email, data.password);
         router.push("/login");
       } catch (error) {
         console.error(error);
+      } finally {
+        setIsLoading(false);
       }
     } else {
       alert("Passwords do not match");
@@ -59,12 +63,21 @@ const SignUp: React.FC = () => {
                   type="password"
                   placeholder="Confirm Password"
                 />
-                <Button
-                  className="bg-gradient-to-r from-blue-500 to-purple-500 shadow-lg mt-6 p-2 text-white rounded-lg w-full hover:scale-105 hover:from-purple-500 hover:to-blue-500 transition duration-300 ease-in-out"
-                  type="submit"
-                >
-                  Sign up
-                </Button>
+                {isLoading ? (
+                  <Box h={12} className="flex justify-center mt-4">
+                    <Center>
+                      <Spinner size="lg" color="white" />
+                    </Center>
+                  </Box>
+                ) : (
+                  <Button
+                    h={12}
+                    className="bg-gradient-to-r from-blue-500 to-purple-500 shadow-lg mt-6 p-2 text-white rounded-lg w-full hover:scale-105 hover:from-purple-500 hover:to-blue-500 transition duration-300 ease-in-out"
+                    type="submit"
+                  >
+                    Sign up
+                  </Button>
+                )}
                 <FormFooter />
               </form>
             </FormProvider>
@@ -91,6 +104,5 @@ const FormFooter = () => {
     </Box>
   );
 };
-
 
 export default SignUp;
