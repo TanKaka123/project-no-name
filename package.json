@@ -20,7 +20,6 @@
     "@react-oauth/google": "^0.12.1",
     "@reduxjs/toolkit": "^2.4.0",
     "@types/node": "18.16.0",
-    "@types/react": "18.0.38",
     "@types/react-dom": "18.0.11",
     "eslint-config-next": "13.3.1",
     "framer-motion": "^11.12.0",
@@ -35,6 +34,7 @@
     "yup": "^1.4.0"
   },
   "devDependencies": {
+    "@types/react": "^18.2.25",
     "autoprefixer": "^10.4.20",
     "eslint": "^8.39.0",
     "eslint-config-prettier": "^8.8.0",
