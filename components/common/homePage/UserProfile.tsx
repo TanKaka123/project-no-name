@@ -1,10 +1,45 @@
 import { useAuth } from "@/contexts/AuthContext";
-import { useProfileQuery } from "@/redux/apis/auth";
 import { Box, Heading, Text, Spinner, Button } from "@chakra-ui/react";
+import { useState, useEffect } from "react";
 
 export const UserProfile = () => {
-  const { data, error, isLoading } = useProfileQuery();
+  const [data, setData] = useState<{ ID: number; Email: string; CreatedAt: string } | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { logout } = useAuth();
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const token = sessionStorage.getItem("access_token");
+        if (!token) throw new Error("No access token found");
+
+        const response = await fetch("https://ky3iceyq67oaavnqyt75lde2g40zviif.lambda-url.ap-southeast-1.on.aws/profile", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`Error fetching profile: ${response.statusText}`);
+        }
+
+        const result: { ID: number; Email: string; CreatedAt: string } = await response.json();
+        setData(result);
+      } catch (err) {
+        setError((err as Error).message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   if (isLoading) {
     return (
@@ -17,7 +52,7 @@ export const UserProfile = () => {
   if (error) {
     return (
       <div className="flex justify-center items-center min-h-screen text-red-500">
-        <p>Error fetching profile.</p>
+        <p>{error}</p>
       </div>
     );
   }
@@ -53,7 +88,7 @@ export const UserProfile = () => {
               Created At:
             </Text>
             <Text className="text-gray-500">
-              {data?.CreatedAt ? new Date(data?.CreatedAt).toLocaleString() : '_'}
+              {data?.CreatedAt ? new Date(data.CreatedAt).toLocaleString() : "_"}
             </Text>
           </div>
         </div>
