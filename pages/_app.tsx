@@ -48,9 +48,7 @@ export default function MyApp({
           <ThemeProvider attribute="class">
             <ReduxProvider store={store}>
               <AuthProvider>
-                <GoogleOAuthProvider
-                  clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? ""}
-                >
+                <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? ""}>
                     {renderLayout(layout, <Component {...pageProps} />)}
                 </GoogleOAuthProvider>
               </AuthProvider>

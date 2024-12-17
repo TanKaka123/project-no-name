@@ -3,6 +3,23 @@ import { mode } from '@chakra-ui/theme-tools'
 
 export const Button = defineStyleConfig({
   variants: {
+    primary: (props: StyleFunctionProps) => ({
+      bg: 'black', // Set background color to black
+      transition: 'ease-out 150ms',
+      _hover: {
+        bg: 'black', // Keep hover background color black
+        _disabled: {
+          bg: 'black', // Disabled hover state background color is also black
+          opacity: 0.5
+        }
+      },
+      _active: { bg: 'black' }, // Active state background color is black
+      _disabled: {
+        bg: 'black', // Disabled state background color is black
+        opacity: 0.5
+      },
+      color: 'white'
+    }),
     brand: (props: StyleFunctionProps) => ({
       bg: mode('primary-light.100', 'primary-dark.800')(props),
       transition: 'ease-out 150ms',
